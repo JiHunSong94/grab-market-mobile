@@ -10,6 +10,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@types/react-native-snap-carousel": "3.8.5",
     "axios": "0.24.0",
     "dayjs": "1.10.7",
     "expo": "~43.0.2",
@@ -17,6 +18,7 @@
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
+    "react-native-snap-carousel": "3.9.1",
     "react-native-web": "0.17.1"
   },
   "devDependencies": {
