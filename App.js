@@ -1,33 +1,67 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native';
 import BasketballImage from './assets/products/basketball1.jpeg';
 import Avatar from './assets/icons/avatar.png';
+import { API_URL } from './config/constants';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import 'dayjs/locale/ko';
+dayjs.extend(relativeTime);
+dayjs.locale('ko');
 
 export default function App() {
+  const [products, setProducts] = React.useState([]); // 네트워크 통신을 통해서 products를 받았을 때
+  React.useEffect(() => {
+    // 렌더링될 때마다 시킬 수 있다.
+    axios
+      .get(`${API_URL}/products`)
+      .then((result) => {
+        setProducts(result.data.products);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
   return (
     <View style={styles.container}>
-      <Text>판매되는 상품들</Text>
-      <View style={styles.productCard}>
-        <View>
-          <Image
-            style={styles.productImage}
-            source={BasketballImage}
-            resizeMode={'contain'}
-          />
+      <ScrollView>
+        <Text style={styles.headLine}>판매되는 상품들</Text>
+        <View style={styles.productList}>
+          {products.map((product, index) => {
+            //map()은 '원본리스트'의 처음 인덱스부터 마지막 인덱스까지 순회한다.
+            return (
+              <View style={styles.productCard}>
+                <View>
+                  <Image
+                    style={styles.productImage}
+                    source={{
+                      uri: `${API_URL}/${product.imageUrl}`,
+                    }}
+                    resizeMode={'contain'}
+                  />
+                </View>
+                <View style={styles.productContents}>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  <Text style={styles.productPrice}>{product.price}</Text>
+                  <View style={styles.productFooter}>
+                    <View style={styles.productSeller}>
+                      <Image style={styles.productAvatar} source={Avatar} />
+                      <Text style={styles.productSellerName}>
+                        {product.seller}
+                      </Text>
+                    </View>
+                    <Text style={styles.productDate}>
+                      {dayjs(product.createdAt).fromNow()}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            );
+          })}
         </View>
-        <View style={styles.productContents}>
-          <Text style={styles.productName}>농구공</Text>
-          <Text style={styles.productPrice}>50000원</Text>
-          <View style={styles.productFooter}>
-            <View style={styles.productSeller}>
-              <Image style={styles.productAvatar} source={Avatar} />
-              <Text style={styles.productSellerName}>그랩</Text>
-            </View>
-            <Text style={styles.productDate}>3분 전</Text>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -44,6 +78,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 16,
     backgroundColor: 'white',
+    marginBottom: 8,
   },
   productImage: {
     width: '100%',
@@ -79,5 +114,13 @@ const styles = StyleSheet.create({
   },
   productDate: {
     fontSize: 16,
+  },
+  productList: {
+    alignItems: 'center',
+  },
+  headLine: {
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 24,
   },
 });
