@@ -22,7 +22,7 @@ dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
 export default function MainScreen(props) {
-  // props -> 부모(상위) 컴포넌트에서 자식컴포넌트에게 prop을 줄 수 있다.
+  // props -> 부모(상위) 컴포넌트에서 자식컴포넌트에게 props을 줄 수 있다.
   const [products, setProducts] = React.useState([]); // 네트워크 통신을 통해서 products를 받았을 때
   const [banners, setBanners] = React.useState([]);
   React.useEffect(() => {
@@ -76,7 +76,10 @@ export default function MainScreen(props) {
               // react에서  map()을 쓸때 렌더링을 최적화하기 위해 권고하는 방향이 있다. 바로 key값을 넣어주는 것. 순회할때 각각 다른 키를 넣게 되면 빠르게 렌더링 가능하기 때문에.
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.navigate('Product');
+                  props.navigation.navigate('Product', {
+                    // 화면이 전환되면서 데이터를 같이 넣어서 보내줄 수 있다. 2번째 인자에 객체를 넣어서
+                    id: product.id,
+                  });
                 }}>
                 <View style={styles.productCard} key={index}>
                   {product.soldout === 1 && <View style={styles.productBlur} />}
