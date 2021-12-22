@@ -8,16 +8,14 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
-  SafeAreaView,
-  Touchable,
 } from 'react-native';
-import Avatar from '../assets/icons/avatar.png';
 import { API_URL } from '../config/constants';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import Carousel from 'react-native-snap-carousel';
+import ProductCard from '../components/productCard';
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
@@ -48,7 +46,7 @@ export default function MainScreen(props) {
     <View style={styles.container}>
       <ScrollView>
         <Carousel
-          data={banners} // banners는 지금 []형태
+          data={banners} // banners는 지금 []array형태
           sliderWidth={Dimensions.get('window').width}
           itemWidth={Dimensions.get('window').width}
           itemHeight={200}
@@ -74,41 +72,11 @@ export default function MainScreen(props) {
             //map()은 '원본리스트'의 처음 인덱스부터 마지막 인덱스까지 순회한다.
             return (
               // react에서  map()을 쓸때 렌더링을 최적화하기 위해 권고하는 방향이 있다. 바로 key값을 넣어주는 것. 순회할때 각각 다른 키를 넣게 되면 빠르게 렌더링 가능하기 때문에.
-              <TouchableOpacity
-                onPress={() => {
-                  props.navigation.navigate('Product', {
-                    // 화면이 전환되면서 데이터를 같이 넣어서 보내줄 수 있다. 2번째 인자에 객체를 넣어서
-                    id: product.id,
-                  });
-                }}>
-                <View style={styles.productCard} key={index}>
-                  {product.soldout === 1 && <View style={styles.productBlur} />}
-                  <View>
-                    <Image
-                      style={styles.productImage}
-                      source={{
-                        uri: `${API_URL}/${product.imageUrl}`,
-                      }}
-                      resizeMode={'contain'}
-                    />
-                  </View>
-                  <View style={styles.productContents}>
-                    <Text style={styles.productName}>{product.name}</Text>
-                    <Text style={styles.productPrice}>{product.price}</Text>
-                    <View style={styles.productFooter}>
-                      <View style={styles.productSeller}>
-                        <Image style={styles.productAvatar} source={Avatar} />
-                        <Text style={styles.productSellerName}>
-                          {product.seller}
-                        </Text>
-                      </View>
-                      <Text style={styles.productDate}>
-                        {dayjs(product.createdAt).fromNow()}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </TouchableOpacity>
+              <ProductCard
+                product={product}
+                key={index}
+                navigation={props.navigation}
+              />
             );
           })}
         </View>
